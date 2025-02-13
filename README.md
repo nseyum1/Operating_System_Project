@@ -1,2 +1,2 @@
 # Operating_System_Project
-This is a class project for Operating System.
+This project is for Operating System.
