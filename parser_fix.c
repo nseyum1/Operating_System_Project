@@ -4,10 +4,10 @@
 #include <string.h>
 
 typedef struct Process { /* A structure defined with typedef data type and named Process */
-	int PID;
-	int Arrival_Time;
-	int Burst_Time;
-	int Priority;
+	int pid;
+	int arrival_time;
+	int burst_time;
+	int priority;
 } Process;
 
 int main(int argc, char *argv[]) /* main entry for program and has parameters arguments passed into command line and what those arguments are */
@@ -45,10 +45,10 @@ int main(int argc, char *argv[]) /* main entry for program and has parameters ar
 		int pid, arrivaltime, bursttime, priority;
 		if (sscanf(line_index, "%d %d %d %d", &pid, &arrivaltime, &bursttime, &priority) == 4)
 		{
-			processes[count].PID = pid;
-			processes[count].Arrival_Time = arrivaltime;
-			processes[count].Burst_Time = bursttime;
-			processes[count].Priority = priority;
+			processes[count].pid = pid;
+			processes[count].arrival_time = arrivaltime;
+			processes[count].burst_time = bursttime;
+			processes[count].priority = priority;
 			count++;
 		}
 	}
@@ -58,10 +58,10 @@ int main(int argc, char *argv[]) /* main entry for program and has parameters ar
 	for (int iterate = 0; iterate < count; iterate++)
 	{
 		printf("\nProcess [%d]:\n", iterate);
-		printf("Process [%d]'s PID: %d\n", iterate, processes[iterate].PID);
-		printf("Process [%d]'s Arrival Time: %d\n", iterate, processes[iterate].Arrival_Time);
-		printf("Process [%d]'s Burst Time: %d\n", iterate, processes[iterate].Burst_Time);
-		printf("Process [%d]'s Priority: %d\n", iterate, processes[iterate].Priority);
+		printf("Process [%d]'s PID: %d\n", iterate, processes[iterate].pid);
+		printf("Process [%d]'s Arrival Time: %d\n", iterate, processes[iterate].arrival_time);
+		printf("Process [%d]'s Burst Time: %d\n", iterate, processes[iterate].burst_time);
+		printf("Process [%d]'s Priority: %d\n", iterate, processes[iterate].priority);
 	}
 	
 	return 0;
