@@ -2,19 +2,30 @@
 #include <stdio.h>
 #include <stdlib.h> /* This is the library where qsort is from */
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
 #include "process_variables.h"
 	
 int sortPriority(const void *a, const void *b)
 {
     Process *p1 = (Process *)a;
     Process *p2 = (Process *)b;
-    return p1->Priority - p2->Priority;
+    if (p1->Priority != p2->Priority)
+    {
+	return p1->Priority - p2->Priority;
+    }
+    else
+    {
+        return p1->Arrival_Time - p2->Arrival_Time;
+    }
 }
 
 
 int main(int argc, char *argv[]) /* main entry for program and has parameters arguments passed into command line and what those arguments are */
 {
-	if (argc < 3) /* if argc on command line passed arguments is less than 2 this usage help will output */
+	if (argc < 2) /* if argc on command line passed arguments is less than 2 this usage help will output */
 	{
 		printf("\nUsage: %s <filename> sorting <priority>\n", argv[0]);
 		return 1;
@@ -57,35 +68,43 @@ int main(int argc, char *argv[]) /* main entry for program and has parameters ar
 
 	fclose(processfile); /* To close the file after data has been parsed or read */
 	
-	printf("\nThe Original Processes \n");
-	for (int iterate = 0; iterate < count; iterate++)
-	{
-		printf("\nProcess [%d]:\n", iterate);
-		printf("Process [%d]'s PID: %d\n", iterate, processes[iterate].PID);
-		printf("Process [%d]'s Arrival Time: %d\n", iterate, processes[iterate].Arrival_Time);
-		printf("Process [%d]'s Burst Time: %d\n", iterate, processes[iterate].Burst_Time);
-		printf("Process [%d]'s Priority: %d\n", iterate, processes[iterate].Priority);
-	}
-	
+	qsort(processes, count, sizeof(Process), sortPriority);
 
-	if (strcmp(argv[2], "priority") == 0)
+	int current_time = 0;
+
+	for (int i = 0; i < count; i++)
 	{
-		qsort(processes, count, sizeof(Process), sortPriority);
-	}
-	else
-	{
-		return 1;
+		while (current_time < processes[i].Arrival_Time)
+		{
+			sleep(1);
+			current_time++;
+		}
+
+		pid_t pid = fork();
+
+		if (pid == 0)
+		{
+			printf("Process (PID:%d) started at time %d\n", processes[i].PID, current_time);
+			sleep(processes[i].Burst_Time);
+			printf("Process (PID:%d) finished at time %d\n", processes[i].PID, current_time + processes[i].Burst_Time);
+			exit(0);
+		}
+		else if (pid > 0)
+		{
+			processes[i].process_id = pid;
+			current_time += processes[i].Burst_Time;
+
+			int status;
+			waitpid(pid, &status, 0);
+		}
+
+		else
+		{
+			perror("Fork Failed");
+			return 1;
+		}
 	}
 	
-	printf("\nThe Priority Sorted Processes \n");
-	for (int iterate = 0; iterate < count; iterate++)
-	{
-		printf("\nProcess [%d]:\n", iterate);
-		printf("Process [%d]'s PID: %d\n", iterate, processes[iterate].PID);
-		printf("Process [%d]'s Arrival Time: %d\n", iterate, processes[iterate].Arrival_Time);
-		printf("Process [%d]'s Burst Time: %d\n", iterate, processes[iterate].Burst_Time);
-		printf("Process [%d]'s Priority: %d\n", iterate, processes[iterate].Priority);
-	}
 
 	return 0;
 
