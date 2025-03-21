@@ -71,6 +71,14 @@ int main(int argc, char *argv[]) /* main entry for program and has parameters ar
 	qsort(processes, count, sizeof(Process), sortPriority);
 
 	int current_time = 0;
+	int waiting_times[256];
+	int turnaround_times[256];
+	double total_waiting_time = 0;
+	double total_turnaround_time = 0;
+	int start_times[256];
+	int gantt_chart[256];
+	int gantt_index = 0;
+
 
 	for (int i = 0; i < count; i++)
 	{
@@ -79,6 +87,8 @@ int main(int argc, char *argv[]) /* main entry for program and has parameters ar
 			sleep(1);
 			current_time++;
 		}
+		
+		start_times[i] = current_time;
 
 		pid_t pid = fork();
 
@@ -92,19 +102,47 @@ int main(int argc, char *argv[]) /* main entry for program and has parameters ar
 		else if (pid > 0)
 		{
 			processes[i].process_id = pid;
+			waiting_times[i] = current_time - processes[i].Arrival_Time;
 			current_time += processes[i].Burst_Time;
+			turnaround_times[i] = current_time - processes[i].Arrival_Time;
+
+			gantt_chart[gantt_index++] = processes[i].PID; 
 
 			int status;
 			waitpid(pid, &status, 0);
-		}
+		
+        		printf("Process P%d: Waiting Time = %d, Turnaround Time = %d\n",
+               		processes[i].PID, waiting_times[i], turnaround_times[i]);
+        		total_waiting_time += waiting_times[i];
+        		total_turnaround_time += turnaround_times[i];
 
+		}
 		else
 		{
 			perror("Fork Failed");
 			return 1;
 		}
 	}
-	
+
+	printf("\n");
+	for (int g = 0; g < gantt_index; g++)
+	{
+		printf("| P%d ", gantt_chart[g]);
+	}
+
+	printf("|\n");
+	current_time = 0;
+	for (int j = 0; j < count; j++)
+	{
+		printf("%d    ", current_time);
+		current_time = processes[j].Arrival_Time + processes[j].Burst_Time;
+	}
+	printf("%d\n", current_time);
+
+    	// Calculate and Print Average Waiting and Turnaround Times
+    	printf("\nAverage Waiting Time: %.2f\n", total_waiting_time / count);
+    	printf("Average Turnaround Time: %.2f\n", total_turnaround_time / count);
+
 
 	return 0;
 
