@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
             pid_t pids[count];
             pids[i] = pid;
             
-            // When child process completes & update time
+            // When child process completes, update time
             int status;
             waitpid(pid, &status, 0);
             current_time += processes[i].burst_time;
