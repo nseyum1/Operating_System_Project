@@ -8,7 +8,7 @@
 #include "process.h"
 
 // Comparison function for `qsort()`
-// - This will sort the processes by arrival time
+// - This will be used to sort the processes by arrival time
 int sortByArrivalTime(const void *a, const void *b) {
     Process *p1 = (Process *)a;
     Process *p2 = (Process *)b;
