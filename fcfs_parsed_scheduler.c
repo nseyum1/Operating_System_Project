@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "process_variables.h"
+#include "process.h"
 
 // Comparison function for `qsort()`
 // - This will sort the processes by arrival time

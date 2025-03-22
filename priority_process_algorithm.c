@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "process_variables.h"
+#include "process.h"
 	
 int sortPriority(const void *a, const void *b)
 {
