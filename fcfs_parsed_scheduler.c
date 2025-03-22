@@ -125,18 +125,17 @@ int main(int argc, char *argv[]) {
     int current_time = 0;
     
     // Process each job in arrival time order (FCFS)
-
     for (int i = 0; i < count; i++) {
-        // If current time is less than arrival time, update current time
+        // Simulate idle time if process hasn't arrived yet
         if (current_time < processes[i].arrival_time) {
             current_time = processes[i].arrival_time;
         }
         
+	// Record process start time
         start_time[i] = current_time;
         
-        // Create a new process
+        // Fork child process to simulate process execution
         pid_t pid = fork();
-        
         if (pid < 0) {
             // Fork failed
             perror("Fork failed... Exiting\n");
