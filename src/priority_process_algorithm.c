@@ -13,18 +13,17 @@
 // - Secondary sort by arrival time
 int sortPriority(const void *a, const void *b)
 {
-    Process *p1 = (Process *)a;
-    Process *p2 = (Process *)b;
-    if (p1->priority != p2->priority)
-    {
-	return p1->priority - p2->priority;
-    }
-    else
-    {
-        return p1->arrival_time - p2->arrival_time;
-    }
+	Process *p1 = (Process *)a;
+	Process *p2 = (Process *)b;
+	if (p1->priority != p2->priority)
+	{
+		return p1->priority - p2->priority;
+	}
+	else
+	{
+		return p1->arrival_time - p2->arrival_time;
+	}
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -38,13 +37,13 @@ int main(int argc, char *argv[])
 	//================================================================================================
 	// Parse supplied file containing processes
 	/*
-	
+
 		Files must be formatted as follows:
-		
+
 		PID Arrival_Time Burst_Time Priority
 		1   0           5          2
 		...
-	
+
 	*/
 
 	FILE *processfile = fopen(argv[1], "r");
@@ -85,8 +84,8 @@ int main(int argc, char *argv[])
 
 	//================================================================================================
 	// Priority Scheduler
-	
-	// Sort processes by priority 
+
+	// Sort processes by priority
 	qsort(processes, count, sizeof(Process), sortPriority);
 
 	// Arrays to track process stats
@@ -102,7 +101,7 @@ int main(int argc, char *argv[])
 	int gantt_chart[256];
 	int gantt_index = 0;
 
-	// Simulate process scheduling & execution	
+	// Simulate process scheduling & execution
 	int current_time = 0;
 	for (int i = 0; i < count; i++)
 	{
@@ -112,9 +111,9 @@ int main(int argc, char *argv[])
 			sleep(1);
 			current_time++;
 		}
-		
+
 		// Process arrived...
-		
+
 		// Record start
 		start_times[i] = current_time;
 
@@ -135,20 +134,19 @@ int main(int argc, char *argv[])
 			waiting_times[i] = current_time - processes[i].arrival_time;
 			current_time += processes[i].burst_time;
 			turnaround_times[i] = current_time - processes[i].arrival_time;
-			gantt_chart[gantt_index++] = processes[i].pid; 
+			gantt_chart[gantt_index++] = processes[i].pid;
 
 			// Wait for child process to finish execution
 			int status;
 			waitpid(pid, &status, 0);
-			
-        		printf(
+
+			printf(
 				"Process %d: Waiting Time = %d, Turnaround Time = %d\n",
-				processes[i].pid, waiting_times[i], turnaround_times[i]
-			);
+				processes[i].pid, waiting_times[i], turnaround_times[i]);
 
 			// Update scheduler metrics
 			total_waiting_time += waiting_times[i];
-        		total_turnaround_time += turnaround_times[i];
+			total_turnaround_time += turnaround_times[i];
 		}
 		else
 		{
@@ -160,28 +158,27 @@ int main(int argc, char *argv[])
 
 	//================================================================================================
 	// Display results
-	
+
 	// Gantt Chart
 	printf("\n");
 	for (int g = 0; g < gantt_index; g++)
 	{
-		printf("| P%d ", gantt_chart[g]);
+		printf("| P%-*d ", max_width, gantt_chart[g]);
 	}
 
 	printf("|\n");
 	current_time = 0;
 	for (int j = 0; j < count; j++)
 	{
-		printf("%d    ", current_time);
-		current_time = processes[j].arrival_time + processes[j].burst_time;
+		printf("%-*d", max_width + 4, current_time);
+		current_time += processes[j].Burst_Time; /* Changed/Modified: current_time = processes[j].Arrival_Time + processes[j].Burst_Time to current_time += processes[j].Burst_Time */
 	}
-	printf("%d\n", current_time);
+	printf("%-*d\n", max_width + 4, current_time);
 
-    	// Scheduler metrics
-    	printf("\nAverage Waiting Time: %.2f\n", total_waiting_time / count);
-    	printf("Average Turnaround Time: %.2f\n", total_turnaround_time / count);
+	// Scheduler metrics
+	printf("\nAverage Waiting Time: %.2f\n", total_waiting_time / count);
+	printf("Average Turnaround Time: %.2f\n", total_turnaround_time / count);
 	//================================================================================================
 
 	return 0;
 }
-
