@@ -160,6 +160,15 @@ int main(int argc, char *argv[])
 	// Display results
 
 	// Gantt Chart
+	int max_width = 0;
+ 	for (int w = 0; w < count; w++)
+ 	{
+ 		int width = snprintf(NULL, 0, "%d", processes[w].burst_time);
+ 		if (width > max_width) 
+ 		{
+ 			max_width = width;
+ 		}
+ 	}
 	printf("\n");
 	for (int g = 0; g < gantt_index; g++)
 	{
