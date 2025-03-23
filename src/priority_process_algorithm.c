@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -142,7 +141,8 @@ int main(int argc, char *argv[])
 
 			printf(
 				"Process %d: Waiting Time = %d, Turnaround Time = %d\n",
-				processes[i].pid, waiting_times[i], turnaround_times[i]);
+				processes[i].pid, waiting_times[i], turnaround_times[i]
+			);
 
 			// Update scheduler metrics
 			total_waiting_time += waiting_times[i];
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 	for (int j = 0; j < count; j++)
 	{
 		printf("%-*d", max_width + 4, current_time);
-		current_time += processes[j].Burst_Time; /* Changed/Modified: current_time = processes[j].Arrival_Time + processes[j].Burst_Time to current_time += processes[j].Burst_Time */
+		current_time += processes[j].burst_time;
 	}
 	printf("%-*d\n", max_width + 4, current_time);
 
